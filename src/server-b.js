@@ -88,6 +88,30 @@ app.get(
     }
 );
 
+//create
+app.post("/api/task", [
+  body("title").isString().isLength({ min: 2, max: 100 }),
+], async (req, res, next) => {
+  try {
+    const { title } = req.body;
+
+    const [result] = await pool.query(
+        "INSERT INTO task (title, is_completed) VALUES (?, ?)",
+        [title, 0]
+    );
+
+    const response = {
+      id: result.insertId,
+      title: title,
+      is_completed: 0,
+    };
+
+    res.status(201).json(response);
+  } catch (e) {
+    next(e);
+  }
+});
+
 // CREAR
 app.post(
     "/api/usuarios",
@@ -127,6 +151,13 @@ app.post(
       }
     }
 );
+
+//update
+app.put("/api/task/:id", [
+  param("id").isInt({ min: 1 }).withMessage("id inválido"),
+], (req, res, next) => {
+
+})
 
 // ACTUALIZAR
 app.put(
@@ -204,6 +235,20 @@ app.delete(
       }
     }
 );
+
+
+
+//read
+app.get("/api/task", (req, res, next) => {
+
+})
+
+
+
+//delete
+app.delete("/api/task/:id", (req, res, next) => {
+
+})
 
 /** ======= ERROR HANDLER ======= */
 app.use((err, req, res, next) => {

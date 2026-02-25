@@ -42,7 +42,8 @@ async function api(url, options = {}) {
   });
 
   const contentType = res.headers.get("content-type") || "";
-  const data = contentType.includes("application/json") ? await res.json() : await res.text();
+  //const data = contentType.includes("application/json") ? await res.json() : await res.text();
+  const data = await res.json();
 
   if (!res.ok) {
     const message =
@@ -88,7 +89,7 @@ function render(users) {
           (u.email || "").toLowerCase().includes(q)
       );
 
-  els.tbody.innerHTML = filtered
+  els.tbody.innerHTML = users // [{}, {}, {}, {}, {}]
       .map(u => `
       <tr>
         <td><code>${u.id}</code></td>
@@ -135,6 +136,8 @@ function resetForm() {
 
 async function loadUsers() {
   const users = await api(API_BASE);
+  console.log(users);
+  //users = [{},{}]
   state.users = users.map(u => ({ ...u, activo: !!u.activo }));
   render(state.users);
 }
